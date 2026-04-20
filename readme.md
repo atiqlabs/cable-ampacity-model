@@ -1,3 +1,7 @@
+atiqlabs ⚡
+
+Engineering software for power cable analysis and ampacity calculations.
+
 Cable Ampacity Model
 
 IEC-based cable ampacity calculation tool inspired by CYMCAP.
