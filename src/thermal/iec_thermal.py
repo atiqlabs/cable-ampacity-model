@@ -5,6 +5,11 @@ import math
 
 
 class IECThermal:
+
+    # -----------------------------------------------
+    # ---INTERNAL THERMAL RESISTANCE (T1,T2,T3)------
+    #-----------------------------------------------
+
     def __init__(self, cable, installation, environment):
         self.cable = cable
         self.installation = installation
@@ -87,9 +92,12 @@ class IECThermal:
         return 0
     
 # ------------------------------------------------------------
-#---CALCULATION OF EXTERNAL THERMAL RESISTANCE TO CABLE-------
+#---EXTERNAL THERMAL RESISTANCE TO CABLE (T4)-----------------
 #-------------------------------------------------------------
-
+    def thermal_resistance_T4_air(self):
+        pass
+    
+    
     def thermal_resistance_T4_duct(self): # Thermal resistance of the duct (or pipe) itself. Clasue 4.2.6.4- IEC 60287-2-1
 
 
@@ -104,6 +112,22 @@ class IECThermal:
         D_in = duct.inner_diameter
 
         return (rho / (2 * math.pi)) * math.log(D_out / D_in) # see Section 4.2.6.4 of IEC 60287-2-1
-    
 
+    def thermal_resistance_T4_external(self):
+        pass
+
+    def thermal_resistance_T4_backfill(self):
+        pass
+
+    def thermal_resistance_T4_soil(self):
+        pass
+
+    def thermal_resistance_T4_total(self):
+        return (
+            self.thermal_resistance_T4_air()
+            + self.thermal_resistance_T4_duct()
+            + self.thermal_resistance_T4_external()
+            + self.thermal_resistance_T4_backfill()
+            + self.thermal_resistance_T4_soil()
+        )
 
