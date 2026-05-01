@@ -39,7 +39,13 @@ class Cable: # Cable Class
      #----------------------------------------
 
         self.cable_type = cable_type # taken from user
-        self.size = size # taken from user
+        self.size = size # taken from user # keep it if you want label # will decide about it later
+        
+        try:
+             self.area_mm2 = float(str(size).split()[0]) # it extracts 1200 from 1200 mm2
+        except:
+             raise ValueError(f"Invalid Cable Size:  {size}") 
+
         self.voltage = voltage # taken from user
         self.standard = standard # taken from user
 
@@ -151,7 +157,7 @@ class Cable: # Cable Class
               else:
                    current_diameter += 2*layer.value
          
-              layer.diameter = current_diameter
+              layer.diameter = current_diameter/1000 # convert mm to m
 
 
 

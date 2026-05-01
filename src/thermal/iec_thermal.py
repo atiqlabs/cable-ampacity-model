@@ -59,8 +59,8 @@ class IECThermal:
                 if rho is None:
                     return 0
                 
-                D_out = current.diameter/1000 # convert mm to m
-                D_in = previous.diameter/1000 # convert mm to m
+                D_out = current.diameter #  /1000 removed
+                D_in = previous.diameter # /1000 removed
 
                 return (rho / (2 * math.pi)) * math.log(D_out / D_in)
         

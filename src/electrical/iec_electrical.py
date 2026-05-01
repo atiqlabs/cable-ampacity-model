@@ -25,10 +25,7 @@ class IEC60287:
             d_mm = conductor.value #diameter in mm
             area_mm2 = math.pi*(d_mm**2)/4 # area formula
         else: #  i.e use 1200mm2 as area, this has been used by manufacturer.
-            # extract 1200 from "1200 mm²"
-            size_str = self.cable.size.split()[0]
-            area_mm2 = float(size_str)
-
+            area_mm2 = self.cable.area_mm2
         return area_mm2 * 1e-6 # convert mm2 to m2
     
     def get_conductor_diameter(self):
@@ -47,14 +44,13 @@ class IEC60287:
         alpha = material.temp_coefficient
 
         if rho20 is None or alpha is None:
-            print("Material data missing!")
-            return None
+            raise ValueError("Material data missing for conductor!")
         
         # area
         A = self.get_conductor_area()
 
         # R20 (Ω/m)
-        R20 = rho20 / A * 1.05 # multiply by 1.05 to get the results close in the pdf report. the resistivity used there is i think value is higher
+        R20 = rho20 / A  # multiply by 1.05 to get the results close to in the pdf report. the resistivity used there is i think value is higher
 
         # convert to Ω/km
         R20_km = R20 * 1000

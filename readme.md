@@ -34,7 +34,7 @@ The software is being developed using:
 
 ## 🛠️ Tech Stack
 - Language: Python 
-- Design: Modular and object-oriented approach  
+- Design: Modular and object-oriented approach 
 
 ---
 
