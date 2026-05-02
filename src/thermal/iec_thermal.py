@@ -95,7 +95,7 @@ class IECThermal:
 #---EXTERNAL THERMAL RESISTANCE TO CABLE (T4)-----------------
 #-------------------------------------------------------------
     def thermal_resistance_T4_air(self):
-        pass
+        return 0
     
     
     def thermal_resistance_T4_duct(self): # Thermal resistance of the duct (or pipe) itself. Clasue 4.2.6.4- IEC 60287-2-1
@@ -114,13 +114,16 @@ class IECThermal:
         return (rho / (2 * math.pi)) * math.log(D_out / D_in) # see Section 4.2.6.4 of IEC 60287-2-1
 
     def thermal_resistance_T4_external(self):
-        pass
+        return 0
 
     def thermal_resistance_T4_backfill(self):
-        pass
+        return 0
 
     def thermal_resistance_T4_soil(self):
-        pass
+        rho = self.environment.soil_resistivity # K.m/W
+        D = self.cable.layers[-1].diameter # Cable outer diameter (last layer)
+        depth = self.installation.depth/1000 # mm to m
+        return (rho / (2 * math.pi)) * math.log(2 * depth / D)
 
     def thermal_resistance_T4_total(self):
         return (
@@ -130,4 +133,25 @@ class IECThermal:
             + self.thermal_resistance_T4_backfill()
             + self.thermal_resistance_T4_soil()
         )
+    
+    def ampacity(self,R_ac):
+        theta_max = self.environment.temperature   # conductor temp
+        theta_ambient = 20  # assume for now (we will improve later)
+
+        delta_theta = theta_max - theta_ambient
+
+        T_total = (
+            self.thermal_resistance_T1()
+            + self.thermal_resistance_T2()
+            + self.thermal_resistance_T3()
+            + self.thermal_resistance_T4_total()
+        )
+
+        if T_total == 0:
+            raise ValueError("Thermal resistance is zero")
+        
+        # 🔥 FIX: convert Ω/km → Ω/m
+        R_ac_m = R_ac / 1000
+        
+        return math.sqrt(delta_theta / (R_ac_m * T_total))
 

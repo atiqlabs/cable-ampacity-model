@@ -72,6 +72,15 @@ def main():
     T4_duct = thermal.thermal_resistance_T4_duct()
     print("T4 (duct) =", round(T4_duct, 3))
 
+    T4_total = thermal.thermal_resistance_T4_total()
+    print("T4 total =", round(T4_total, 3))
+
+    
+
+    R_ac = iec.ac_resistance()
+    I = thermal.ampacity(R_ac)
+    print("Ampacity (A):", I)
+
     # Un comment this if you want to see the conductor.
 
     """app = QApplication(sys.argv)  # Uncomment this for GUI
