@@ -2,6 +2,8 @@
 # The formula used are from the IEC standards
 
 import math
+from src.standards.iec_constants import DUCT_MATERIALS
+
 
 
 class IECThermal:
@@ -94,8 +96,16 @@ class IECThermal:
 # ------------------------------------------------------------
 #---EXTERNAL THERMAL RESISTANCE TO CABLE (T4)-----------------
 #-------------------------------------------------------------
-    def thermal_resistance_T4_air(self):
-        return 0
+    def thermal_resistance_T4_air_gap(self):
+
+        U = 1.87
+        V = 0.312
+        Y = 0.0037
+
+        theta_m = 75  # mean temp from PDF
+        d_cable = self.cable.layers[-1].diameter  # meters
+
+        return U / (1 + 0.1 * (V + Y * theta_m) * d_cable)
     
     
     def thermal_resistance_T4_duct(self): # Thermal resistance of the duct (or pipe) itself. Clasue 4.2.6.4- IEC 60287-2-1
@@ -114,25 +124,63 @@ class IECThermal:
         return (rho / (2 * math.pi)) * math.log(D_out / D_in) # see Section 4.2.6.4 of IEC 60287-2-1
 
     def thermal_resistance_T4_external(self):
-        return 0
 
-    def thermal_resistance_T4_backfill(self):
-        return 0
+        rho_c = DUCT_MATERIALS["CONCRETE"]["thermal_resistivity"]
+        L = self.installation.depth / 1000
+        Do = self.installation.duct.outer_diameter / 1000
+        s = self.installation.spacing / 1000
+
+        u = 2 * L / Do
+
+        term1 = math.log(u + math.sqrt(u**2 - 1))
+        term2 = math.log(1 + (2 * L / s)**2)
+
+        return (rho_c / (2 * math.pi)) * (term1 + term2)
+
+    def thermal_resistance_T4_concrete(self):
+        rho = DUCT_MATERIALS["CONCRETE"]["thermal_resistivity"]
+
+        # assume outer radius of duct bank (temporary approximation)
+        D_duct = self.installation.duct.outer_diameter / 1000  # m
+        D_concrete = D_duct * 2  # simple assumption (expand later)
+
+        return (rho / (2 * math.pi)) * math.log(D_concrete / D_duct)
 
     def thermal_resistance_T4_soil(self):
         rho = self.environment.soil_resistivity # K.m/W
         D = self.cable.layers[-1].diameter # Cable outer diameter (last layer)
         depth = self.installation.depth/1000 # mm to m
         return (rho / (2 * math.pi)) * math.log(2 * depth / D)
+    
+    def thermal_resistance_T4_backfill_concrete(self):
+
+        N = self.installation.num_cables
+        rho_bf = 1.0   # backfill (temporary, from PDF)
+        rho_c = 1.2    # concrete
+
+        # STEP 2: equivalent radius
+        rb = min(self.installation.x, self.installation.y) / 2
+
+        # STEP 3: depth to center
+        LG = self.installation.depth / 1000
+
+        # STEP 3: compute u
+        u = LG / rb
+
+        return (N / (2 * math.pi)) * (rho_bf - rho_c) * math.log(u + math.sqrt(u**2 - 1))
 
     def thermal_resistance_T4_total(self):
-        return (
-            self.thermal_resistance_T4_air()
-            + self.thermal_resistance_T4_duct()
-            + self.thermal_resistance_T4_external()
-            + self.thermal_resistance_T4_backfill()
-            + self.thermal_resistance_T4_soil()
-        )
+
+        if self.installation.duct is not None:
+            return (
+                self.thermal_resistance_T4_air_gap()
+                + self.thermal_resistance_T4_duct()
+                + self.thermal_resistance_T4_external()
+                + self.thermal_resistance_T4_backfill_concrete()
+            )
+        
+        else:
+            return self.thermal_resistance_T4_soil()
     
     def ampacity(self,R_ac):
         theta_max = self.environment.temperature   # conductor temp

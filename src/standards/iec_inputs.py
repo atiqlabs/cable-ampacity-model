@@ -13,6 +13,13 @@ class Installation:
         self.depth = depth # depth from the surface of the ground to the group center in mm
         self.duct = duct # we will take the properties of duct from user. and note it is an object of class Duct.
 
+        # We are adding this temporary. we will fix it later
+        self.num_cables = 3   # from PDF
+        self.x = 0.4          # width (m)
+        self.y = 0.9          # height (m)
+        
+
+
 class Environment:
     def __init__(self, temp_mode = "normal", temperature = None, soil_resistivity = 1.2):
 
