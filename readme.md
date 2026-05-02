@@ -1,92 +1,132 @@
-# ⚡ atiqlabs  
-Engineering Software for Power Systems & Cable Analysis
-
----
+# Cable Ampacity Model (IEC 60287)
 
 ## 📌 Overview
-atiqlabs is an engineering-focused software initiative aimed at developing practical tools for power cable analysis, thermal modeling, and electrical system calculations.
 
-The current project focuses on building a reliable and structured implementation of cable ampacity calculations based on engineering principles and standard methodologies.
-
----
-
-## 🚀 Current Scope
-Development of a cable ampacity calculation tool, including electrical and thermal modeling of power cables under various installation conditions.
+This project implements a steady-state cable ampacity calculation based on IEC 60287 methodology.
+It models both electrical losses and thermal resistances to compute allowable current under specified installation conditions.
 
 ---
 
-## 🔧 Features
-- DC resistance (Rdc) calculation  
-- AC resistance (Rac) calculation  
-- Skin and proximity effects (ys, yp)  
-- Modular structure for cable parameter modeling  
-- Initial framework for thermal ampacity calculations  
+## ⚡ Methodology
+
+The ampacity is calculated using:
+
+I = sqrt(Δθ / (R_ac × T_total))
+
+Where:
+
+* Δθ → temperature difference (conductor – ambient)
+* R_ac → AC resistance of conductor (Ω/m)
+* T_total → total thermal resistance (K·m/W)
 
 ---
 
-## 🧠 Engineering Basis
-The software is being developed using:
-- IEC-based cable rating methodologies  
-- Practical engineering assumptions  
-- Consideration of real installation conditions (e.g., buried, duct, HDD)  
+## 🔧 Model Components
+
+### Electrical Model
+
+* DC resistance (temperature corrected)
+* Skin effect (ys)
+* Proximity effect (yp)
+* AC resistance:
+  R_ac = R_dc × (1 + ys + yp)
 
 ---
 
-## 🛠️ Tech Stack
-- Language: Python 
-- Design: Modular and object-oriented approach 
+### Thermal Model
+
+Total thermal resistance:
+
+T_total = T1 + T2 + T3 + T4
+
+#### Internal Resistances
+
+* T1 → conductor to sheath
+* T2 → sheath to armor (0 in this case)
+* T3 → outer sheath
+
+#### External Resistance (T4)
+
+For **concrete duct bank installation**, T4 is decomposed as:
+
+T4 = T′4 + T″4 + T‴4 + T⁗4
+
+Where:
+
+* T′4 → air gap between cable and duct
+* T″4 → duct material resistance
+* T‴4 → external thermal resistance of duct (concrete region)
+* T⁗4 → correction factor (backfill ↔ concrete)
 
 ---
 
-## 📂 Project Structure
-src/
-│
-├── electrical/ # Electrical calculations (Rdc, Rac, ys, yp)
-├── thermal/ # Thermal model (ampacity, heat transfer)
-├── models/ # Cable and material data structures
-├── standards/ # IEC references and constants
-├── gui/ # Future user interface components
-│
-├── main.py # Entry point of the application
-└── init.py
+## 📊 Reference Case (Validated)
+
+This implementation is validated against a real engineering calculation:
+
+* Cable: 1 × 1200 mm² Cu XLPE (110 kV)
+* Installation: Concrete duct bank
+* Formation: Flat
+* Spacing: 400 mm
+* Depth: 1450 mm
+* Duct: 200 / 225 mm (inner / outer)
+* Soil resistivity: 1.2 K·m/W
+* Conductor temperature: 90°C
+* Ambient temperature: 40°C
+
+### Results
+
+| Parameter     | Value        |
+| ------------- | ------------ |
+| AC Resistance | 0.01952 Ω/km |
+| T1            | 0.378        |
+| T3            | 0.051        |
+| T4            | ~3.10        |
+| Ampacity      | ~1008 A      |
+
+### Reference
+
+Riyadh Cables IEC 60287 calculation (duct bank case)
 
 ---
 
-## 📊 Roadmap
-- Complete thermal ampacity model (steady-state)  
-- Integrate installation methods:
-  - Direct buried  
-  - Duct bank  
-  - HDD  
-- Add cable material and layer database  
-- Develop GUI for user interaction  
-- Validate results with standard/industry references  
-- Add report generation  
+## 🧠 Key Notes
+
+* AC resistance is converted from Ω/km → Ω/m before ampacity calculation
+* Thermal model follows IEC decomposition (not simplified lumped model)
+* Model currently assumes:
+
+  * single circuit
+  * flat formation
+  * simplified geometry for correction factors
 
 ---
 
-## 🔜 Future Expansion
-- Voltage drop calculator  
-- Short circuit rating tool  
-- Grounding system calculations  
-- Cable sizing assistant  
+## ⚠️ Limitations (Current Version)
+
+* T'''''4 (soil ↔ backfill correction) not yet implemented
+* Grouping effects partially simplified
+* Some geometric parameters are hardcoded (temporary)
+* No GUI / user input interface yet
 
 ---
 
-## 🎯 Vision
-To develop professional engineering software solutions that bridge electrical engineering theory with practical computational tools.
+## 🚀 Next Steps
 
-atiqlabs aims to evolve into a specialized platform for power system analysis and engineering automation.
-
----
-
-## 🤝 Contribution
-This project is under active development.  
-Technical feedback and collaboration discussions are welcome.
+* Implement full T'''''4 correction
+* Generalize installation inputs (remove hardcoding)
+* Add multiple validation cases
+* Refactor architecture (modular separation)
 
 ---
 
-## ⭐ Support
-If you find this project useful, consider giving it a star ⭐.
+## 🏷 Version
+
+v1.0-iec60287-ductbank
+Validated against reference calculation (~2% deviation)
 
 ---
+
+## 👤 Author
+
+Atiq ur Rahman
