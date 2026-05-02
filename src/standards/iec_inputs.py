@@ -14,7 +14,7 @@ class Installation:
         self.duct = duct # we will take the properties of duct from user. and note it is an object of class Duct.
 
 class Environment:
-    def __init__(self, temp_mode = "normal", temperature = None, soil_resistivity = 1.0):
+    def __init__(self, temp_mode = "normal", temperature = None, soil_resistivity = 1.2):
 
         if temperature is not None:  # If user gives custom temperature → use it
             self.temperature = temperature

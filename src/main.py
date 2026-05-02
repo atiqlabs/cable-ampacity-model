@@ -79,7 +79,7 @@ def main():
 
     R_ac = iec.ac_resistance()
     I = thermal.ampacity(R_ac)
-    print("Ampacity (A):", I)
+    print("Ampacity (A):", round(I,3))
 
     # Un comment this if you want to see the conductor.
 
