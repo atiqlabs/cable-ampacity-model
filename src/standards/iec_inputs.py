@@ -1,7 +1,7 @@
 from src.standards.iec_constants import *
 
 class Installation:
-    def __init__(self,formation = "flat", spacing = 400, depth = 1450, duct = None):
+    def __init__(self,formation = "flat", spacing = 400, depth = 1600, duct = None):
         self.formation = formation
 
         if spacing == 0: # control for spacing
@@ -15,8 +15,9 @@ class Installation:
 
         # We are adding this temporary. we will fix it later
         self.num_cables = 3   # from PDF
-        self.x = 0.4          # width (m)
-        self.y = 0.9          # height (m)
+        self.x = 0.9          # width (m)
+        self.y = 1.2          # height (m)
+        self.z = 0.8          # this is above duct bank as indicated in the figure pdf
         
 
 

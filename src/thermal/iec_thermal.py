@@ -158,12 +158,22 @@ class IECThermal:
         rho_bf = 1.0   # backfill (temporary, from PDF)
         rho_c = 1.2    # concrete
 
-        # STEP 2: equivalent radius
-        rb = min(self.installation.x, self.installation.y) / 2
+        # STEP 2: equivalent radius according to clause 4.2.7 of IEC 60287-2-1:2023
+
+        x = self.installation.x   # the shorter side in meters
+        y = self.installation.y   # the longer side in meters
+
+        z = self.installation.z   # above duct bank
+
+        term1 = ((x / (2 * y)) ** ((4 / math.pi) - (x / y)))
+        term2 = math.log(1 + (y**2 / x**2))
+        term3 = math.log(x / 2)
+
+        rb = math.exp(term1 * term2 + term3)
 
         # STEP 3: depth to center
-        LG = self.installation.depth / 1000
-
+       # LG = self.installation.depth / 1000
+        LG = z + y/2
         # STEP 3: compute u
         u = LG / rb
 
