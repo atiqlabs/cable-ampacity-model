@@ -1,7 +1,9 @@
 import sys
 from src.electrical.iec_electrical import IEC60287
 from src.standards.iec_constants import *
-from src.standards.iec_inputs import *
+from src.models.installation import Installation
+from src.models.environment import Environment
+from src.models.duct import Duct
 from src.thermal.iec_thermal import IECThermal
 
 from PySide6.QtWidgets import QApplication
