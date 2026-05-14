@@ -1,6 +1,45 @@
 # This module finds out the thermal properties of Cable according to IEC 60287-2-1:2023
 # The formula used are from the IEC standards
 
+"""
+High-level IEC 60287 thermal coordinator.
+
+This module assembles and coordinates the thermal resistance
+components required for ampacity calculations according to
+IEC 60287-2-1.
+
+The thermal model is divided into reusable physical mechanisms:
+
+    - Internal cable thermal resistances
+        (T1, T2, T3)
+
+    - Air-gap thermal resistance
+
+    - Duct thermal resistance
+
+    - External thermal resistance to surrounding medium
+
+    - Installation correction factors
+        (e.g. concrete duct bank / backfill corrections)
+
+This coordinator combines the above thermal components to:
+
+    - evaluate total thermal resistance (T4)
+    - compute overall thermal network
+    - calculate cable ampacity
+
+Current validated implementation:
+    - Single circuit concrete duct bank installation
+    - IEC 60287 steady-state ampacity model
+
+Future extensibility:
+    - direct buried systems
+    - air installations
+    - tunnels and troughs
+    - multiple circuit arrangements
+    - transient thermal calculations (IEC 60853)
+"""
+
 import math
 from src.standards.iec_constants import DUCT_MATERIALS
 
@@ -19,7 +58,6 @@ class IECThermal:
     #-----------------------------------------------
 
     def __init__(self, cable, installation, environment):
-        #self.cable = cable
         self.installation = installation
         self.environment = environment
 
@@ -33,17 +71,6 @@ class IECThermal:
 
 
         self.correction = ThermalCorrectionFactors(installation)
-# ------------------------------------------------------------
-#---EXTERNAL THERMAL RESISTANCE TO CABLE (T4)-----------------
-#-------------------------------------------------------------
-    def thermal_resistance_T4_concrete(self):
-        rho = DUCT_MATERIALS["CONCRETE"]["thermal_resistivity"]
-
-        # assume outer radius of duct bank (temporary approximation)
-        D_duct = self.installation.duct.outer_diameter / 1000  # m
-        D_concrete = D_duct * 2  # simple assumption (expand later)
-
-        return (rho / (2 * math.pi)) * math.log(D_concrete / D_duct)
 
     def thermal_resistance_T4_total(self):
 
