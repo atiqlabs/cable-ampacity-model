@@ -28,7 +28,7 @@ def main():
         material = "PVC"
     )
 
-    concrete_duct_bank = ConcreteDuctBank()
+    concrete_duct_bank = ConcreteDuctBank() # we will populate it later. from user
 
     installation = Installation(
         formation = "flat",
@@ -66,16 +66,16 @@ def main():
     print("AC Resistance (Ω/km):", round(R_ac,5))
 
     thermal = IECThermal(cable, installation, environment)
-    T1 = thermal.thermal_resistance_T1()
+    T1 = thermal.internal.thermal_resistance_T1()
     print("T1 =", round(T1, 3))
 
-    T2 = thermal.thermal_resistance_T2()
+    T2 = thermal.internal.thermal_resistance_T2()
     print("T2 =", round(T2, 3))
 
-    T3 = thermal.thermal_resistance_T3()
+    T3 = thermal.internal.thermal_resistance_T3()
     print("T3 =", round(T3, 3))
 
-    T4_duct = thermal.thermal_resistance_T4_duct()
+    T4_duct = thermal.duct.thermal_resistance_T4_duct()
     print("T4 (duct) =", round(T4_duct, 3))
 
     T4_total = thermal.thermal_resistance_T4_total()
