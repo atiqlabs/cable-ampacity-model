@@ -4,6 +4,7 @@ from src.standards.iec_constants import *
 from src.models.installation import Installation
 from src.models.environment import Environment
 from src.models.duct import Duct
+from src.models.concrete_duct_bank import ConcreteDuctBank
 from src.thermal.iec_thermal import IECThermal
 
 from PySide6.QtWidgets import QApplication
@@ -27,11 +28,14 @@ def main():
         material = "PVC"
     )
 
+    concrete_duct_bank = ConcreteDuctBank()
+
     installation = Installation(
         formation = "flat",
         spacing = 400, # in mm
-        depth = 1450, # in mm
-        duct = duct
+        depth = 1600, # in mm  # previously 1450
+        duct = duct,
+        concrete_duct_bank=concrete_duct_bank
     )
 
     environment = Environment(

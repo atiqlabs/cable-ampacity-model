@@ -154,16 +154,18 @@ class IECThermal:
     
     def thermal_resistance_T4_backfill_concrete(self):
 
-        N = self.installation.num_cables
+        bank = self.installation.concrete_duct_bank
+
+        N = bank.num_cables
         rho_bf = 1.0   # backfill (temporary, from PDF)
         rho_c = 1.2    # concrete
 
         # STEP 2: equivalent radius according to clause 4.2.7 of IEC 60287-2-1:2023
 
-        x = self.installation.x   # the shorter side in meters
-        y = self.installation.y   # the longer side in meters
+        x = bank.width   # the shorter/width in this case side in meters
+        y = bank.height   # the longer side in meters
 
-        z = self.installation.z   # above duct bank
+        z = bank.top_cover   # above duct bank
 
         term1 = ((x / (2 * y)) ** ((4 / math.pi) - (x / y)))
         term2 = math.log(1 + (y**2 / x**2))
