@@ -48,12 +48,18 @@ def main():
     display_results(results)
 
 
-    # Un comment this if you want to see the conductor.
+    #-------------------------------------------------
+    #--------GUI Launch -----------------------------
+    #------------------------------------------------
 
-    """app = QApplication(sys.argv)  # Uncomment this for GUI
-    window = MainWindow(cable)
+    app = QApplication(sys.argv)  # Uncomment this for GUI
+    window = MainWindow(cable,
+                        installation,
+                        environment,
+                        engine
+                        )
     window.show()
-    sys.exit(app.exec())"""
+    sys.exit(app.exec())
 
 
 
