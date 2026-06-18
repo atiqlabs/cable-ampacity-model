@@ -23,8 +23,8 @@ class ThermalCorrectionFactors:
         bank = self.installation.concrete_duct_bank
 
         N = bank.num_cables
-        rho_bf = 1.0   # backfill (temporary, from PDF)
-        rho_c = 1.2    # concrete
+        rho_bf = bank.backfill_resistivity   # backfill (temporary, from PDF)
+        rho_c = bank.concrete_resistivity    # concrete
 
         # STEP 2: equivalent radius according to clause 4.2.7 of IEC 60287-2-1:2023
 

@@ -4,7 +4,7 @@ class ConcreteDuctBank:
     def __init__(
         self,
         num_cables=3,
-        width=0.9,
+        width=0.9, # shorter side of the duct bank in this case
         height=1.2, # longer side of the duct bank in this case
         top_cover=0.8, # above duct bank
         concrete_resistivity=1.2,
