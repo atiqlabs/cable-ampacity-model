@@ -312,7 +312,7 @@ class MainWindow(QMainWindow):
 
         scale = 2.0
 
-        minimum_visual_thickness = 4
+        minimum_visual_thickness = 1.2
 
         visual_radii = []
 
@@ -382,7 +382,7 @@ class MainWindow(QMainWindow):
                 -radius,
                 2 * radius,
                 2 * radius,
-                QPen(Qt.black),
+                QPen(QColor("#222222"), 0.5),
                 QBrush(QColor(color))
             )
 

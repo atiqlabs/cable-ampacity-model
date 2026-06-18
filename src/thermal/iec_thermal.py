@@ -45,7 +45,7 @@ from src.standards.iec_constants import DUCT_MATERIALS
 
 from src.thermal.internal import InternalThermalResistance
 from src.thermal.air_gap import AirGapThermalResistance
-from src.thermal.duct import DuctThermalResistance
+from src.thermal.duct_resistance import DuctThermalResistance
 from src.thermal.external import ExternalThermalResistance
 from src.thermal.correction_factors import ThermalCorrectionFactors
 

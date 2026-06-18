@@ -45,7 +45,7 @@ def main():
     engine = AmpacityEngine(cable,installation,environment)
 
     results = engine.calculate()  # you can print results like results.ampacity etc
-    display_results(results)
+    display_results(results) # display results and is imported from utilis
 
 
     #-------------------------------------------------
