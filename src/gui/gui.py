@@ -38,9 +38,13 @@ class MainWindow(QMainWindow):
         central_widget = QWidget()
         main_layout = QVBoxLayout(central_widget)
 
-        self.scene = QGraphicsScene()
+        self.scene = QGraphicsScene() # for the cable diagram
         self.view = QGraphicsView(self.scene)
-        self.view.setRenderHint(QPainter.Antialiasing)
+        self.view.setRenderHint(QPainter.Antialiasing) # for smoother edges
+
+        self.duct_bank_scene = QGraphicsScene() # for the duct bank diagram
+        self.duct_bank_view = QGraphicsView(self.duct_bank_scene)
+        self.duct_bank_view.setRenderHint(QPainter.Antialiasing)
 
         self.layer_sequence = [
             layer.name
@@ -142,10 +146,14 @@ class MainWindow(QMainWindow):
         )
         duct_bank_layout.addWidget(self.update_duct_bank_button, 1, 6)
 
+        drawing_layout = QHBoxLayout()
+        drawing_layout.addWidget(self.view)
+        drawing_layout.addWidget(self.duct_bank_view)
+
         main_layout.addLayout(layer_layout)
         main_layout.addLayout(installation_layout)
         main_layout.addLayout(duct_bank_layout)
-        main_layout.addWidget(self.view)
+        main_layout.addLayout(drawing_layout)
 
         self.ampacity_label = QLabel("Ampacity:")
         self.rac_label = QLabel("AC Resistance:")
@@ -171,8 +179,9 @@ class MainWindow(QMainWindow):
             self.update_duct_bank
         )
 
-        self.draw_cable()
         self.recalculate()
+        self.draw_cable()
+        self.draw_duct_bank()
 
     def update_layer(self):
         selected_layer = self.layer_dropdown.currentText()
@@ -195,6 +204,7 @@ class MainWindow(QMainWindow):
 
         self.recalculate()
         self.draw_cable()
+        self.draw_duct_bank()
 
         self.input_field.clear()
 
@@ -227,6 +237,7 @@ class MainWindow(QMainWindow):
         self.installation.depth = depth
 
         self.recalculate()
+        self.draw_duct_bank()
 
     def update_duct_bank(self):
         bank = self.installation.concrete_duct_bank
@@ -267,6 +278,7 @@ class MainWindow(QMainWindow):
         bank.backfill_resistivity = backfill_resistivity
 
         self.recalculate()
+        self.draw_duct_bank()
 
     def draw_cable(self):
         self.scene.clear()
@@ -316,6 +328,172 @@ class MainWindow(QMainWindow):
 
         self.view.fitInView(
             self.scene.itemsBoundingRect(),
+            Qt.KeepAspectRatio
+        )
+
+    def draw_duct_bank(self):
+        self.duct_bank_scene.clear()
+
+        bank = self.installation.concrete_duct_bank
+        duct = self.installation.duct
+
+        if bank is None or duct is None:
+            self.duct_bank_scene.addText("No duct bank data")
+            return
+
+        scale = 320
+
+        bank_width = bank.height * scale
+        bank_height = bank.width * scale
+        top_cover = bank.top_cover * scale
+
+        spacing = self.installation.spacing / 1000 * scale
+        duct_outer_diameter = duct.outer_diameter / 1000 * scale
+        duct_inner_diameter = duct.inner_diameter / 1000 * scale
+        cable_diameter = self.cable.layers[-1].diameter * scale
+
+        bank_left = -bank_width / 2
+        bank_top = 0
+
+        concrete_pen = QPen(QColor("#555555"), 1.5)
+        concrete_brush = QBrush(QColor("#d8d8d8"))
+
+        self.duct_bank_scene.addRect(
+            bank_left,
+            bank_top,
+            bank_width,
+            bank_height,
+            concrete_pen,
+            concrete_brush
+        )
+
+        ground_y = -top_cover
+
+        self.duct_bank_scene.addLine(
+            bank_left - 60,
+            ground_y,
+            bank_left + bank_width + 60,
+            ground_y,
+            QPen(QColor("#6b4f2a"), 2)
+        )
+
+        self.duct_bank_scene.addText("Ground level").setPos(
+            bank_left,
+            ground_y - 25
+        )
+
+        count = bank.num_cables
+        start_x = -((count - 1) * spacing) / 2
+        center_y = bank_top + bank_height / 2
+
+        for index in range(count):
+            center_x = start_x + index * spacing
+
+            self.duct_bank_scene.addEllipse(
+                center_x - duct_outer_diameter / 2,
+                center_y - duct_outer_diameter / 2,
+                duct_outer_diameter,
+                duct_outer_diameter,
+                QPen(QColor("#333333"), 1.2),
+                QBrush(QColor("#b8c7d9"))
+            )
+
+            self.duct_bank_scene.addEllipse(
+                center_x - duct_inner_diameter / 2,
+                center_y - duct_inner_diameter / 2,
+                duct_inner_diameter,
+                duct_inner_diameter,
+                QPen(QColor("#444444"), 0.8),
+                QBrush(QColor("#f4f4f4"))
+            )
+
+            self.duct_bank_scene.addEllipse(
+                center_x - cable_diameter / 2,
+                center_y - cable_diameter / 2,
+                cable_diameter,
+                cable_diameter,
+                QPen(QColor("#111111"), 0.8),
+                QBrush(QColor("#222222"))
+            )
+
+        dimension_pen = QPen(QColor("#1f4e79"), 1)
+
+        bottom_y = bank_top + bank_height + 35
+        self.duct_bank_scene.addLine(
+            bank_left,
+            bottom_y,
+            bank_left + bank_width,
+            bottom_y,
+            dimension_pen
+        )
+        self.duct_bank_scene.addText(
+            f"Long side = {bank.height:.3f} m"
+        ).setPos(
+            bank_left + bank_width / 2 - 70,
+            bottom_y + 5
+        )
+
+        right_x = bank_left + bank_width + 35
+        self.duct_bank_scene.addLine(
+            right_x,
+            bank_top,
+            right_x,
+            bank_top + bank_height,
+            dimension_pen
+        )
+        self.duct_bank_scene.addText(
+            f"Short side = {bank.width:.3f} m"
+        ).setPos(
+            right_x + 5,
+            bank_top + bank_height / 2 - 10
+        )
+
+        cover_x = bank_left - 35
+        self.duct_bank_scene.addLine(
+            cover_x,
+            ground_y,
+            cover_x,
+            bank_top,
+            dimension_pen
+        )
+        self.duct_bank_scene.addText(
+            f"Top cover = {bank.top_cover:.3f} m"
+        ).setPos(
+            cover_x - 95,
+            (ground_y + bank_top) / 2 - 10
+        )
+
+        if count > 1:
+            self.duct_bank_scene.addText(
+                f"Spacing = {self.installation.spacing:.0f} mm"
+            ).setPos(
+                -70,
+                center_y + duct_outer_diameter / 2 + 10
+            )
+
+        self.duct_bank_scene.addText(
+            f"Duct OD/ID = {duct.outer_diameter:.0f}/{duct.inner_diameter:.0f} mm"
+        ).setPos(
+            bank_left,
+            bank_top + bank_height + 70
+        )
+
+        self.duct_bank_scene.addText(
+            f"Cable OD = {self.cable.layers[-1].diameter * 1000:.1f} mm"
+        ).setPos(
+            bank_left,
+            bank_top + bank_height + 95
+        )
+
+        self.duct_bank_scene.addText(
+            f"Depth to group center = {self.installation.depth:.0f} mm"
+        ).setPos(
+            bank_left,
+            bank_top + bank_height + 120
+        )
+
+        self.duct_bank_view.fitInView(
+            self.duct_bank_scene.itemsBoundingRect(),
             Qt.KeepAspectRatio
         )
 
