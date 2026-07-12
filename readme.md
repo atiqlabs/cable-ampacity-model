@@ -1,200 +1,203 @@
 # Cable Ampacity Model (IEC 60287)
 
-## Overview
+A Python-based engineering software implementing steady-state cable ampacity calculations in accordance with **IEC 60287**.
 
-This project implements a steady-state cable ampacity calculation workflow based on IEC 60287 methodology.
+The project combines a modular calculation engine with an interactive **PySide6 desktop GUI** for cable modelling, installation configuration, engineering visualization, and real-time ampacity analysis.
 
-It models electrical losses and thermal resistances to estimate the allowable current for a power cable under selected installation conditions.
-
-The current validated case is focused on a single-core HV cable installed in a concrete duct bank.
+The current validated implementation focuses on **single-core HV cables installed in concrete duct banks**.
 
 ---
 
-## Methodology
+# Features
 
-The ampacity is calculated using:
+### IEC 60287 Calculation Engine
 
-```text
-I = sqrt(delta_theta / (R_ac * T_total))
-```
+- DC resistance calculation
+- AC resistance calculation
+- Skin effect (Ys)
+- Proximity effect (Yp)
+- Thermal resistance calculations (T1, T2, T3, T4)
+- Steady-state cable ampacity calculation
 
-Where:
+### Interactive GUI
 
-```text
-delta_theta = conductor temperature - ambient temperature
-R_ac        = AC resistance of conductor, ohm/m
-T_total     = total thermal resistance, K.m/W
-```
+- Cable layer editor
+- Cable installation parameter editor
+- Concrete duct bank editor
+- Automatic engineering recalculation
+- Cable cross-section visualization
+- Concrete duct bank visualization
 
-The project calculates `R_ac` in `ohm/km`, then converts it to `ohm/m` before evaluating ampacity.
+### Results Panel
 
----
+The GUI displays:
 
-## Project Structure
-
-```text
-src/models/        Input and output data objects
-src/electrical/    IEC 60287 electrical resistance calculations
-src/thermal/       IEC 60287 thermal resistance calculations
-src/calculations/  High-level ampacity calculation engine
-src/standards/     IEC constants and lookup tables
-src/gui/           PySide6 desktop GUI
-src/utilis/        Terminal result display helpers
-```
-
----
-
-## Model Components
-
-### Electrical Model
-
-The electrical model includes:
-
-```text
-DC resistance, temperature corrected
-Skin effect factor, ys
-Proximity effect factor, yp
-AC resistance
-```
-
-The AC resistance is calculated as:
-
-```text
-R_ac = R_dc * (1 + ys + yp)
-```
-
-### Thermal Model
-
-The total thermal resistance is:
-
-```text
-T_total = T1 + T2 + T3 + T4
-```
-
-Internal thermal resistances:
-
-```text
-T1 = conductor to sheath
-T2 = sheath to armour
-T3 = outer jacket
-```
-
-For concrete duct bank installation, external resistance `T4` is decomposed into:
-
-```text
-T4_air_gap
-T4_duct
-T4_external
-T4_backfill_concrete_correction
-```
+- Cable ampacity
+- DC resistance
+- AC resistance
+- Skin effect
+- Proximity effect
+- T1
+- T2
+- T3
+- T4 Duct
+- T4 Total
 
 ---
 
-## GUI Features
+# Validation
 
-The PySide6 GUI currently supports editing:
+The IEC 60287 implementation has been verified against engineering calculations from a reputable power engineering company in the Kingdom of Saudi Arabia.
+
+The comparison includes:
+
+- AC resistance
+- Thermal resistances
+- Total thermal resistance
+- Cable ampacity
+
+The calculated results closely match the reference engineering calculations, providing confidence in the implementation of the current IEC 60287 modules.
+
+---
+
+# Methodology
+
+The steady-state cable ampacity is calculated using IEC 60287:
 
 ```text
-Cable layer diameter/thickness
-Cable spacing
-Installation depth
-Concrete duct bank number of cables
-Concrete duct bank short side
-Concrete duct bank long side
-Concrete duct bank top cover
-Concrete thermal resistivity
-Backfill thermal resistivity
+I = √(Δθ / (Rac × Ttotal))
 ```
 
-After each update, the GUI recalculates ampacity through the same calculation engine used by the command-line workflow.
-
-The GUI also displays:
+Where
 
 ```text
-Cable cross-section
-Ampacity
-AC resistance
+Δθ      = Conductor temperature rise
+Rac     = AC conductor resistance (Ω/m)
+Ttotal  = Total thermal resistance (K·m/W)
+```
+
+The electrical model calculates:
+
+```text
+Rdc
+↓
+
+Skin Effect (Ys)
+
+↓
+
+Proximity Effect (Yp)
+
+↓
+
+Rac
+```
+
+The thermal model calculates:
+
+```text
 T1
-T4 total
+T2
+T3
+T4
+
+↓
+
+Ttotal
+```
+
+These are combined to determine the allowable continuous current (ampacity).
+
+---
+
+# Project Structure
+
+```text
+src/
+│
+├── calculations/
+│   └── ampacity_engine.py
+│
+├── electrical/
+│   └── iec_electrical.py
+│
+├── thermal/
+│   └── iec_thermal.py
+│
+├── models/
+│   ├── cable.py
+│   ├── installation.py
+│   ├── duct.py
+│   ├── concrete_duct_bank.py
+│   ├── environment.py
+│   └── results.py
+│
+├── gui/
+│   └── gui.py
+│
+├── standards/
+│
+└── main.py
 ```
 
 ---
 
-## Reference Case
+# GUI Preview
 
-This implementation is validated against a real engineering calculation:
-
-```text
-Cable: 1 x 1200 mm2 Cu XLPE, 110 kV
-Installation: Concrete duct bank
-Formation: Flat
-Spacing: 400 mm
-Depth: 1450 mm reference case, 1600 mm current default in main.py
-Duct: 200 / 225 mm, inner / outer
-Soil resistivity: 1.2 K.m/W
-Conductor temperature: 90 degC
-```
-
-Reference results:
-
-| Parameter | Value |
-| --- | --- |
-| AC Resistance | 0.01952 ohm/km |
-| T1 | 0.378 |
-| T3 | 0.051 |
-| T4 | approximately 3.10 |
-| Ampacity | approximately 1008 A |
-
-Reference source:
-
-```text
-Riyadh Cables IEC 60287 calculation, duct bank case
-```
+![Main GUI](images/gui_main.png)
 
 ---
 
-## Current Limitations
+# Current Installation Case
 
-The current version still has some simplified assumptions:
+Validated for:
 
-```text
-Single circuit
-Flat formation
-Concrete duct bank installation
-Some geometric correction factors are simplified
-Some ambient assumptions are still hardcoded
-Trefoil formation is not implemented yet
-Multiple circuit grouping is not fully implemented yet
-```
+- Single-core HV cable
+- Concrete duct bank installation
+- Flat formation
+- Multiple ducts
+- IEC 60287 steady-state calculations
 
 ---
 
-## Next Steps
+# Technologies
 
-Planned improvements:
-
-```text
-Add trefoil installation support
-Add direct buried installation support
-Add duct material and duct size GUI inputs
-Add temperature and soil resistivity GUI inputs
-Add multiple validation cases
-Improve input validation and error messages
-Generate engineering reports
-```
+- Python 3
+- PySide6
+- Object-Oriented Programming (OOP)
+- IEC 60287
+- Git & GitHub
 
 ---
 
-## Version
+# Roadmap
 
-```text
-v1.1-iec60287-ductbank-gui
-```
+Upcoming development phases:
+
+- Direct buried installation
+- Trefoil cable formation
+- Multiple circuit configurations
+- PDF engineering reports
+- Excel export
+- Project save/load functionality
+- Engineering charts and plots
+- Improved input validation
+- Additional IEC 60287 installation methods
 
 ---
 
-## Author
+# Version
 
-Atiq ur Rahman
+Current Version:
 
-Powered by AtiqLabs
+**v1.3 – GUI & Calculation Engine Integration**
+
+---
+
+# Author
+
+**Atiq Ur Rahman**
+
+Senior Electrical Engineer | Power Systems | HV Cable Engineering
+
+Developed under **AtiqLabs**.
