@@ -144,7 +144,7 @@ src/
 
 # GUI Preview
 
-![Main GUI](images/gui_main.png)
+![Main GUI](images/gui_main.jpg)
 
 ---
 
