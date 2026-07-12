@@ -190,7 +190,7 @@ Upcoming development phases:
 
 Current Version:
 
-**v1.3 – GUI & Calculation Engine Integration**
+**v1.0 – GUI & Calculation Engine Integration**
 
 ---
 
