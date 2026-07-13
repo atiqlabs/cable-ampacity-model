@@ -299,7 +299,7 @@ class MainWindow(QMainWindow):
         value_text = self.input_field.text()
         
         try:
-            self.results = self.controller.update_layer(selected_layer,value_text)
+            self.results = self.controller.update_layer(selected_layer, value_text)
 
         except ValueError as error:
             print(error)
@@ -315,26 +315,14 @@ class MainWindow(QMainWindow):
         spacing_text = self.spacing_input.text()
         depth_text = self.depth_input.text()
 
-        if not spacing_text or not depth_text:
-            print("Input fields are empty. Please enter values.")
-            return
-        
         try:
-            spacing = float(spacing_text)
-            depth = float(depth_text)
+            self.results = self.controller.update_installation(spacing_text, depth_text)
 
-        except ValueError:
-            print("Invalid input. Please enter numeric values.")
+        except ValueError as error:
+            print(error)
             return
-        
-        if spacing <= 0 or depth <= 0:
-            print("Invalid input. Please enter positive values.")
-            return
-        
-        self.installation.spacing = spacing
-        self.installation.depth = depth
 
-        self.recalculate() # recalculate the cable properties after updating the installation parameters
+        self.update_results() # update the results after modifications in installations
         self.draw_duct_bank() # redraw the duct bank after updating the installation parameters.
 
     def update_duct_bank(self): # For Concrete Duct Bank Parameters. Module 04

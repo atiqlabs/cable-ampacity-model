@@ -45,4 +45,23 @@ class MainController:
         self.cable.update_layer_value(index, value)
 
         return self.calculate_results()
+    
+    def update_installation(self,spacing_text, depth_text): # For Cable Installation Parameters. Module 03
+        
+        if not spacing_text or not depth_text:
+            raise ValueError("Input fields are empty. Please enter values.")
+        
+        try:
+            spacing = float(spacing_text)
+            depth = float (depth_text)
 
+        except ValueError:
+            raise ValueError("Invalid input. Please enter numeric values.")
+        
+        if spacing <= 0 or depth <= 0:
+            raise ValueError("Invalid input. Please enter positive values.")
+        
+        self.installation.spacing = spacing
+        self.installation.depth = depth
+
+        return self.calculate_results()
