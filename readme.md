@@ -2,7 +2,7 @@
 
 A Python-based engineering software implementing steady-state cable ampacity calculations in accordance with **IEC 60287**.
 
-The project combines a modular calculation engine with an interactive **PySide6 desktop GUI** for cable modelling, installation configuration, engineering visualization, and real-time ampacity analysis.
+The project combines a modular calculation engine with an interactive **PySide6 desktop GUI** for cable modelling, installation configuration, engineering visualization, and real-time ampacity analysis. The application follows an MVC-inspired structure so engineering models, user-interface presentation, and user actions remain separated.
 
 The current validated implementation focuses on **single-core HV cables installed in concrete duct banks**.
 
@@ -27,6 +27,13 @@ The current validated implementation focuses on **single-core HV cables installe
 - Automatic engineering recalculation
 - Cable cross-section visualization
 - Concrete duct bank visualization
+
+### MVC Application Structure
+
+- `models/` holds cable, installation, environment, duct-bank, and result data.
+- `calculations/` contains the IEC 60287 calculation workflow.
+- `controllers/` validates GUI input, updates engineering models, and requests recalculation.
+- `gui/` contains PySide6 widgets, result display, and engineering drawings.
 
 ### Results Panel
 
@@ -113,7 +120,13 @@ These are combined to determine the allowable continuous current (ampacity).
 # Project Structure
 
 ```text
+images/
+└── gui_main.jpg
+
 src/
+│
+├── controllers/
+│   └── main_controller.py
 │
 ├── calculations/
 │   └── ampacity_engine.py
@@ -139,6 +152,24 @@ src/
 │
 └── main.py
 ```
+
+---
+
+# MVC Workflow
+
+```text
+PySide6 GUI (View)
+        ↓ user input and button actions
+MainController (Controller)
+        ↓ validation and model updates
+Cable / Installation / Duct Bank (Models)
+        ↓
+AmpacityEngine (IEC 60287 calculations)
+        ↓ results
+PySide6 GUI (View)
+```
+
+The controller coordinates cable-layer, installation, and concrete-duct-bank updates. It validates user input, updates the existing model objects, and returns recalculated results. The GUI remains responsible for rendering results and engineering drawings.
 
 ---
 
