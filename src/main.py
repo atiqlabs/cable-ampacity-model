@@ -45,12 +45,6 @@ def main():
 
     engine = AmpacityEngine(cable,installation,environment)
 
-    controller = MainController(  # controller introduction for MVC
-        cable,
-        installation,
-        environment,
-        engine
-    )
 
     results = engine.calculate()  # you can print results like results.ampacity etc
     display_results(results) # display results and is imported from utilis
@@ -66,6 +60,16 @@ def main():
                         environment,
                         engine
                         )
+    
+    controller = MainController(  # controller introduction for MVC
+        window, # window is the view here
+        cable,
+        installation,
+        environment,
+        engine
+    )
+
+    window.controller = controller
     window.show()
     sys.exit(app.exec())
 

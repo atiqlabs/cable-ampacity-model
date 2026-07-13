@@ -14,7 +14,8 @@ class MainController:
     actions here one at a time.
     """
 
-    def __init__(self, cable, installation, environment, engine):
+    def __init__(self, view, cable, installation, environment, engine):
+        self.view = view # takes window from main
         self.cable = cable
         self.installation = installation
         self.environment = environment
