@@ -23,3 +23,26 @@ class MainController:
     def calculate_results(self):
         """Return the latest ampacity results from the existing engine."""
         return self.engine.calculate()
+    
+    def update_layer(self, layer_name, value_text): # take values from drop down
+
+        if not value_text: # Input Validation
+            raise ValueError("Input field is empty. Please enter a value")
+        
+        try:
+            value = float(value_text)
+        except ValueError:
+            raise ValueError("Invalid input. Please enter a numeric value.")
+        
+        if value <= 0:
+            raise ValueError("Invalid input. Please enter a positive value")
+        
+        # Find the selected layer in the Cable model.
+        # The GUI passes only the layer name.
+        layer_names = [layer.name for layer in self.cable.layers] 
+        index = layer_names.index(layer_name)
+
+        self.cable.update_layer_value(index, value)
+
+        return self.calculate_results()
+

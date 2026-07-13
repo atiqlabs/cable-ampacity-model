@@ -296,26 +296,16 @@ class MainWindow(QMainWindow):
 
     def update_layer(self): # For Cable Layer Properties. Module 02
         selected_layer = self.layer_dropdown.currentText()
-        index = self.layer_sequence.index(selected_layer)
         value_text = self.input_field.text()
         
-        if not value_text:
-            print("Input field is empty. Please enter a value.")
-            return
-
         try:
-            value = float(self.input_field.text())
-        except ValueError:
-            print("Invalid input. Please enter a numeric value.")
-            return
-        
-        if value <= 0:
-            print("Invalid input. Please enter a positive value.")
-            return 
-        
-        self.cable.update_layer_value(index, value) # updating the layer value in the cable object
+            self.results = self.controller.update_layer(selected_layer,value_text)
 
-        self.recalculate() # recalculate the cable properties after updating the layer
+        except ValueError as error:
+            print(error)
+            return
+
+        self.update_results() # calls the update results function
         self.draw_cable() # redraw the cable after updating the layer
         self.draw_duct_bank() # redraw the duct bank after updating the layer
 
