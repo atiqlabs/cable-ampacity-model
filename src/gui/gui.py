@@ -26,13 +26,13 @@ from PySide6.QtCore import Qt
 
 class MainWindow(QMainWindow):
 
-    def __init__(self, cable, installation, environment, engine):
+    def __init__(self, controller):
         super().__init__() # this tells the QmainWindow to create itself.
 
-        self.cable = cable
-        self.installation = installation
-        self.environment = environment
-        self.engine = engine
+        self.controller = controller
+        self.cable = controller.cable
+        self.installation = controller.installation
+        self.environment = controller.environment
 
 
         self.setWindowTitle("IEC 60287 Cable Ampacity GUI")
@@ -383,7 +383,7 @@ class MainWindow(QMainWindow):
         # -Recalculate the IEC 60287 engineering model.
         # -------------------------------------------
 
-        self.results = self.engine.calculate()
+        self.results = self.controller.calculate_results()
 
         self.update_results() # Call update results function
 

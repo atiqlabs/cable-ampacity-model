@@ -44,9 +44,14 @@ def main():
     )
 
     engine = AmpacityEngine(cable,installation,environment)
+    controller = MainController(  # controller introduction for MVC
+        cable,
+        installation,
+        environment,
+        engine
+    )
 
-
-    results = engine.calculate()  # you can print results like results.ampacity etc
+    results = controller.calculate_results()  # you can print results like results.ampacity etc
     display_results(results) # display results and is imported from utilis
 
 
@@ -55,21 +60,7 @@ def main():
     #------------------------------------------------
 
     app = QApplication(sys.argv)  # Uncomment this for GUI
-    window = MainWindow(cable,
-                        installation,
-                        environment,
-                        engine
-                        )
-    
-    controller = MainController(  # controller introduction for MVC
-        window, # window is the view here
-        cable,
-        installation,
-        environment,
-        engine
-    )
-
-    window.controller = controller
+    window = MainWindow(controller)
     window.show()
     sys.exit(app.exec())
 
