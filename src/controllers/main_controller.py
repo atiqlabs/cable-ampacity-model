@@ -108,3 +108,13 @@ class MainController:
         bank.backfill_resistivity = backfill_resistivity
 
         return self.calculate_results()
+    
+    def get_layer_input_placeholder(self, layer_name):
+        for layer in self.cable.layers:
+            if layer.name == layer_name:
+                if layer.is_base:
+                    return "Diameter (mm)"
+                return "Thickness (mm)"
+            
+        raise ValueError(f"Unknown cable layer: {layer_name}")
+        

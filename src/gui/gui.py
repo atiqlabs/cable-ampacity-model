@@ -286,13 +286,14 @@ class MainWindow(QMainWindow):
         # ----------------------------------------------------
 
     def update_placeholder(self, selected_layer = None):
-        index = self.layer_sequence.index(selected_layer)
-        layer = self.cable.layers[index]
+        try:
+            placeholder = self.controller.get_layer_input_placeholder(selected_layer)
 
-        if layer.is_base:
-            self.input_field.setPlaceholderText("Diameter (mm)")
-        else:
-            self.input_field.setPlaceholderText("Thickness (mm)")
+        except ValueError as error:
+            print(error)
+            return
+        
+        self.input_field.setPlaceholderText(placeholder)
 
     def update_layer(self): # For Cable Layer Properties. Module 02
         selected_layer = self.layer_dropdown.currentText()
