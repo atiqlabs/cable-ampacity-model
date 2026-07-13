@@ -6,6 +6,7 @@ from src.models.duct import Duct
 from src.models.concrete_duct_bank import ConcreteDuctBank
 from src.calculations.ampacity_engine import AmpacityEngine
 from src.utilis.display_results import display_results
+from src.controllers.main_controller import MainController
 
 from PySide6.QtWidgets import QApplication
 from src.models.cable import Cable
@@ -43,6 +44,13 @@ def main():
     )
 
     engine = AmpacityEngine(cable,installation,environment)
+
+    controller = MainController(  # controller introduction for MVC
+        cable,
+        installation,
+        environment,
+        engine
+    )
 
     results = engine.calculate()  # you can print results like results.ampacity etc
     display_results(results) # display results and is imported from utilis
