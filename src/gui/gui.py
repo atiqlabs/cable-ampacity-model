@@ -69,9 +69,10 @@ class MainWindow(QMainWindow):
         # It will show the layer sequence of the cable.-------
         # ----------------------------------------------------
 
-        self.layer_sequence = [
-            layer.name for layer in self.cable.layers # It will create a list of layer names in the order they are added to the cable
-        ]
+
+        # It will create a list of layer names in the order they are added to the cable
+        self.layer_sequence = self.controller.get_layer_names()
+
 
         cable_group = QGroupBox("Cable Layer Properties") # group box for the cable drawing
         layer_layout = QHBoxLayout() # horizontal layout for the layer sequence
@@ -327,7 +328,6 @@ class MainWindow(QMainWindow):
         self.draw_duct_bank() # redraw the duct bank after updating the installation parameters.
 
     def update_duct_bank(self): # For Concrete Duct Bank Parameters. Module 04
-        bank = self.installation.concrete_duct_bank
 
         try:
             self.results = self.controller.update_duct_bank(

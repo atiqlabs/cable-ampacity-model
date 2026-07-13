@@ -117,4 +117,8 @@ class MainController:
                 return "Thickness (mm)"
             
         raise ValueError(f"Unknown cable layer: {layer_name}")
+    
+    def get_layer_names(self):
+
+        return [layer.name for layer in self.cable.layers]
         
