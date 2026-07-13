@@ -64,4 +64,47 @@ class MainController:
         self.installation.spacing = spacing
         self.installation.depth = depth
 
+        return self.calculate_results() 
+    
+    def update_duct_bank(
+                        self, 
+                        num_cables_text,
+                        width_text,
+                        height_text,
+                        top_cover_text,
+                        concrete_resistivity_text,
+                        backfill_resistivity_text,
+                        ):
+        
+        try:
+            num_cables = int(num_cables_text)
+            width = float(width_text)
+            height = float(height_text)
+            top_cover = float(top_cover_text)
+            concrete_resistivity = float(concrete_resistivity_text)
+            backfill_resistivity = float(backfill_resistivity_text) 
+
+        except ValueError:
+            raise ValueError("Invalid input. Please enter numeric values.")   
+
+        if (
+            num_cables <= 0
+            or width <= 0
+            or height <= 0
+            or top_cover <= 0
+            or concrete_resistivity <= 0
+            or backfill_resistivity <= 0
+            ):
+            raise ValueError("Invalid input. Please enter positive values.")
+        
+
+        bank = self.installation.concrete_duct_bank
+
+        bank.num_cables = num_cables
+        bank.width = width
+        bank.height = height
+        bank.top_cover = top_cover
+        bank.concrete_resistivity = concrete_resistivity
+        bank.backfill_resistivity = backfill_resistivity
+
         return self.calculate_results()

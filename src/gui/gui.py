@@ -329,29 +329,21 @@ class MainWindow(QMainWindow):
         bank = self.installation.concrete_duct_bank
 
         try:
-            num_cables = int(self.bank_num_cables_input.text())
-            width = float(self.bank_width_input.text())
-            height = float(self.bank_height_input.text())
-            top_cover = float(self.bank_top_cover_input.text())
-            concrete_resistivity = float(self.bank_concrete_resistivity_input.text())
-            backfill_resistivity = float(self.bank_backfill_resistivity_input.text())
+            self.results = self.controller.update_duct_bank(
+                self.bank_num_cables_input.text(),
+                self.bank_width_input.text(),
+                self.bank_height_input.text(),
+                self.bank_top_cover_input.text(),
+                self.bank_concrete_resistivity_input.text(),
+                self.bank_backfill_resistivity_input.text(),
 
-        except ValueError:
-            print("Invalid input. Please enter numeric values.")
-            return
-        
-        if num_cables <= 0 or width <= 0 or height <= 0 or top_cover <= 0 or concrete_resistivity <= 0 or backfill_resistivity <= 0:
-            print("Invalid input. Please enter positive values.")
-            return
-        
-        bank.num_cables = num_cables
-        bank.width = width
-        bank.height = height
-        bank.top_cover = top_cover
-        bank.concrete_resistivity = concrete_resistivity
-        bank.backfill_resistivity = backfill_resistivity
+            )
 
-        self.recalculate() # recalculate the cable properties after updating the duct bank parameters
+        except ValueError as error:
+            print(error)
+            return
+
+        self.update_results() # recalculate the cable properties after updating the duct bank parameters
         self.draw_duct_bank() # redraw the duct bank after updating the duct bank parameters.
         
 
