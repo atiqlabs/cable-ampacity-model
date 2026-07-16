@@ -89,6 +89,12 @@ class Project:
             for study in studies:
                 self._add_study(study, update_timestamp=False)
 
+
+        # ------------------------------------------
+        # -------PUBLIC INTERFACE -----------------
+        #------------------------------------------
+
+        
     @property
     def studies(self) -> tuple[Study, ...]:
         """Return an immutable view of the studies in project order.
@@ -97,7 +103,7 @@ class Project:
         """
         return tuple(self._studies)
 
-    def add_study(self, study: Study) -> None:
+    def add_study(self, study: Study) -> None: # add a new study
         """Add a study to the project.
 
         Args:
@@ -184,10 +190,15 @@ class Project:
             project.
         """
         return list(self._studies)
+    
+        # - ----------------------------------------------
+        # --------PRIVATE HELPERS ------------------------
+        # ------------------------------------------------
+
 
     def _add_study(self, study: Study, *, update_timestamp: bool) -> None:
         """Validate and store a study, optionally recording the change."""
-        self._validate_study(study)
+        self._validate_study(study) # Note already it has been validated, No need for this.
         if self.find_study_by_id(study.study_id) is not None:
             raise ValueError(
                 f"A study with ID {study.study_id} already exists in this project."
@@ -202,9 +213,7 @@ class Project:
         self.updated_at = _utc_now()
 
     @staticmethod
-    def _copy_metadata(
-        metadata: Optional[Mapping[str, Any]],
-    ) -> dict[str, Any]:
+    def _copy_metadata(metadata: Optional[Mapping[str, Any]],) -> dict[str, Any]:
         """Return an owned copy of valid project metadata."""
         if metadata is None:
             return {}
